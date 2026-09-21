@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mirrativ還元コイン計算ツール</title>
+  <meta name="description" content="Mirrativで配信者がギフトをもらったとき、配信終了時に付与される「盛り上がりコイン」を計算するツールです。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="intro">
+      <h1>Mirrativ還元コイン計算ツール</h1>
+      <p>もらったギフ<span class="kern-to">ト</span>のコイン額から、配信終了時に付与される「盛り上がりコイン」を計算します。</p>
+    </header>
+
+    <section class="inputs" aria-label="ギフト額の入力">
+      <div class="field" data-kind="free">
+        <div class="field-head">
+          <label class="field-label" for="free-input"><span class="dot" aria-hidden="true"></span><span>無償コインのギフ<span class="kern-to">ト</span>額</span></label>
+          <span class="rate">還元率 30%</span>
+        </div>
+        <div class="field-box">
+          <input id="free-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+          <span class="suffix">コイン</span>
+        </div>
+      </div>
+
+      <div class="field" data-kind="paid">
+        <div class="field-head">
+          <label class="field-label" for="paid-input"><span class="dot" aria-hidden="true"></span><span>有償コインのギフ<span class="kern-to">ト</span>額</span></label>
+          <span class="rate">還元率 90%</span>
+        </div>
+        <div class="field-box">
+          <input id="paid-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+          <span class="suffix">コイン</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="reset" id="reset-button">入力をリセッ<span class="kern-to">ト</span></button>
+      </div>
+    </section>
+
+    <section class="result" aria-labelledby="result-title">
+      <h2 class="result-label" id="result-title">盛り上がりコイン（合計）</h2>
+      <p class="result-total" aria-hidden="true">
+        <span class="num" id="total-return">0</span>
+        <span class="unit">コイン</span>
+      </p>
+      <span class="sr-only" id="status" role="status"></span>
+
+      <dl class="breakdown">
+        <div class="row" data-kind="free">
+          <dt><span class="dot" aria-hidden="true"></span>無償コイン分</dt>
+          <dd>
+            <span class="value" id="free-return">0</span>
+            <span class="formula" id="free-formula">0 × 30%</span>
+          </dd>
+        </div>
+        <div class="row" data-kind="paid">
+          <dt><span class="dot" aria-hidden="true"></span>有償コイン分</dt>
+          <dd>
+            <span class="value" id="paid-return">0</span>
+            <span class="formula" id="paid-formula">0 × 90%</span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <p class="note">※還元率は公開情報をもとに算出した当サイ<span class="kern-to">ト</span>独自の計算値です。Mirrativ公式が公開している数値ではありません。実際の付与コインはMirrativアプリ内の「コイン通帳」からご確認ください。</p>
+  </main>
+
+  <footer class="site-footer">
+    <p>Created by Ciel'N</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
