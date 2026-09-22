@@ -151,12 +151,6 @@ body {
   margin-left: -0.12em;
 }
 
-.rate {
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
 .field-box {
   display: flex;
   align-items: baseline;
@@ -194,6 +188,49 @@ body {
 
 .field-box input::placeholder {
   color: #b5bccb;
+}
+
+/* 「+」で数値を追加するボタン。数字を入力し終えたときだけ表示される */
+.add-btn {
+  flex: none;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: var(--dot);
+  color: #fff;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.add-icon {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+.add-btn[hidden] {
+  display: none;
+}
+
+.add-btn:hover {
+  filter: brightness(1.08);
+}
+
+.add-btn:active {
+  transform: scale(0.92);
+}
+
+.add-btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .suffix {

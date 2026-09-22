@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=0.0.0">
+  <link rel="stylesheet" href="style.css?v=0.0.1">
 </head>
 <body>
   <main class="app">
@@ -21,10 +21,10 @@
       <div class="field" data-kind="free">
         <div class="field-head">
           <label class="field-label" for="free-input"><span class="dot" aria-hidden="true"></span><span>無償コインのギフ<span class="kern-to">ト</span>額</span></label>
-          <span class="rate">還元率 30%</span>
         </div>
         <div class="field-box">
           <input id="free-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+          <button type="button" class="add-btn" id="free-add" aria-label="ギフトを追加" hidden><svg class="add-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
           <span class="suffix">コイン</span>
         </div>
       </div>
@@ -32,10 +32,10 @@
       <div class="field" data-kind="paid">
         <div class="field-head">
           <label class="field-label" for="paid-input"><span class="dot" aria-hidden="true"></span><span>有償コインのギフ<span class="kern-to">ト</span>額</span></label>
-          <span class="rate">還元率 90%</span>
         </div>
         <div class="field-box">
           <input id="paid-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+          <button type="button" class="add-btn" id="paid-add" aria-label="ギフトを追加" hidden><svg class="add-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
           <span class="suffix">コイン</span>
         </div>
       </div>
@@ -78,6 +78,6 @@
     <p>Created by Ciel'N</p>
   </footer>
 
-  <script src="script.js?v=0.0.0"></script>
+  <script src="script.js?v=0.0.1"></script>
 </body>
 </html>

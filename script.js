@@ -16,6 +16,10 @@
     free: $("free-input"),
     paid: $("paid-input"),
   };
+  const addButtons = {
+    free: $("free-add"),
+    paid: $("paid-add"),
+  };
   const outputs = {
     free: { value: $("free-return"), formula: $("free-formula") },
     paid: { value: $("paid-return"), formula: $("paid-formula") },
@@ -33,37 +37,64 @@
 
   // ---- 入力の整形 ----
   const toHalfWidth = (s) =>
-    s.replace(/[０-９]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0));
+    s.replace(/[０-９＋]/g, (ch) =>
+      ch === "＋" ? "+" : String.fromCharCode(ch.charCodeAt(0) - 0xfee0)
+    );
 
-  const digitsOnly = (s) => toHalfWidth(s).replace(/\D/g, "");
+  // 数字と「+」だけを残す（全角は半角に変換済み）
+  const contentOnly = (s) => toHalfWidth(s).replace(/[^\d+]/g, "");
 
-  const sanitize = (s) =>
-    digitsOnly(s).slice(0, MAX_DIGITS).replace(/^0+(?=\d)/, "");
+  // 「+」区切りの各項を整形する（桁数上限・先頭0の除去・連続する+や先頭の+を吸収）
+  const sanitize = (s) => {
+    const cleaned = contentOnly(s);
+    const endsWithPlus = cleaned.endsWith("+") && cleaned !== "+";
+    const terms = cleaned
+      .split("+")
+      .map((term) => term.slice(0, MAX_DIGITS).replace(/^0+(?=\d)/, ""))
+      .filter((term) => term !== "");
+    if (terms.length === 0) return "";
+    return terms.join("+") + (endsWithPlus ? "+" : "");
+  };
 
   const groupDigits = (digits) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-  const parseAmount = (input) => Number(sanitize(input.value)) || 0;
+  // 「+」区切りの各項にカンマ区切りを適用する
+  const formatAmountString = (clean) =>
+    clean.split("+").map(groupDigits).join("+");
+
+  // 「+」区切りの各項を合計した数値を返す
+  const parseAmount = (input) => {
+    const terms = sanitize(input.value).split("+").filter(Boolean);
+    return terms.reduce((sum, term) => sum + Number(term), 0);
+  };
 
   const formatInput = (input) => {
     const raw = input.value;
     const caret = input.selectionStart ?? raw.length;
     const clean = sanitize(raw);
-    const formatted = groupDigits(clean);
+    const formatted = formatAmountString(clean);
     if (formatted === raw) return;
 
-    const digitsBeforeCaret = Math.min(
-      digitsOnly(raw.slice(0, caret)).length,
+    const contentBeforeCaret = Math.min(
+      contentOnly(raw.slice(0, caret)).length,
       clean.length
     );
     input.value = formatted;
 
     let pos = 0;
     let seen = 0;
-    while (pos < formatted.length && seen < digitsBeforeCaret) {
+    while (pos < formatted.length && seen < contentBeforeCaret) {
       if (formatted[pos] !== ",") seen += 1;
       pos += 1;
     }
     input.setSelectionRange(pos, pos);
+  };
+
+  // 入力にフォーカスがあり、末尾が数字のときだけ「+」ボタンを表示する
+  const updateAddButton = (kind) => {
+    const input = inputs[kind];
+    const focused = document.activeElement === input;
+    addButtons[kind].hidden = !(focused && /\d$/.test(contentOnly(input.value)));
   };
 
   // ---- 合計値のアニメーション ----
@@ -117,25 +148,51 @@
   };
 
   // ---- イベント ----
-  Object.values(inputs).forEach((input) => {
+  Object.keys(inputs).forEach((kind) => {
+    const input = inputs[kind];
+
     input.addEventListener("input", (e) => {
       // IME変換中は値を書き換えない（全角数字の入力を壊さないため）
       if (!e.isComposing) formatInput(input);
+      updateAddButton(kind);
       render();
     });
     input.addEventListener("compositionend", () => {
       formatInput(input);
+      updateAddButton(kind);
       render();
+    });
+    input.addEventListener("focus", () => updateAddButton(kind));
+    input.addEventListener("blur", (e) => {
+      // +ボタンへのフォーカス移動（Tab操作）のときは隠さない
+      if (e.relatedTarget === addButtons[kind]) return;
+      updateAddButton(kind);
+    });
+
+    addButtons[kind].addEventListener("blur", () => updateAddButton(kind));
+    // mousedownの既定動作（フォーカス移動）を止め、押しても入力欄のフォーカスが外れないようにする
+    addButtons[kind].addEventListener("mousedown", (e) => {
+      e.preventDefault();
+    });
+    addButtons[kind].addEventListener("click", () => {
+      if (!/\d$/.test(contentOnly(input.value))) return;
+      input.value = formatAmountString(sanitize(input.value) + "+");
+      updateAddButton(kind);
+      render();
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
     });
   });
 
   resetButton.addEventListener("click", () => {
-    Object.values(inputs).forEach((input) => {
-      input.value = "";
+    Object.keys(inputs).forEach((kind) => {
+      inputs[kind].value = "";
+      updateAddButton(kind);
     });
     render();
     inputs.free.focus();
   });
 
+  Object.keys(inputs).forEach(updateAddButton);
   render({ silent: true });
 })();
